@@ -3,10 +3,8 @@
 //
 'use strict';
 
-
 function getPlayerMove(data) {
   // TODO : IMPLEMENT THE BETTER STRATEGY FOR YOUR BOT
-  var side = data.yourTeam.type == 'home' ? -1 : -1;
   var currentPlayer = data.yourTeam.players[data.playerIndex];
   var sixthPartOfFieldWidth = data.settings.field.width / 6 ;
   var playerZoneStartX = sixthPartOfFieldWidth;  
@@ -14,45 +12,29 @@ function getPlayerMove(data) {
 
   var ballStop = getBallStats(ball, data.settings);
   var isBallClose =  (getDistance(currentPlayer, ballStop) <= ball.settings.radius*2+15);
-  var isNearBall =  (getDistance(currentPlayer, ballStop) <= ball.settings.radius*2+150);
-  var isPlayerNear = isNearPlayer(data.playerIndex, data.yourTeam.players);
-  var attackDirection = getDirectionTo(currentPlayer, ballStop)*1.18;    
+  var isNearBall =  (getDistance(currentPlayer, ballStop) <= ball.settings.radius*2+100);
+  var attackDirection = getDirectionTo(currentPlayer, ballStop)*1.2;    
   if( isBallClose && ball.x < currentPlayer.x)
   {
     var zonePoint = {
       x: ballStop.x,
-      y: ballStop.y
+      y: ballStop.y + (ballStop.y < currentPlayer.y ? 70: -70 )
     };
-    attackDirection = getDirectionTo(currentPlayer, zonePoint) + (ballStop.y < currentPlayer.y ? 0.6*side: -0.6*side );
+    attackDirection = getDirectionTo(currentPlayer, zonePoint);
   }
   if (data.playerIndex === 1) {
     var zonePoint = {
       x: (isNearBall && currentPlayer.x < data.settings.field.width/2 ? ballStop.x : playerZoneStartX),
-      y: ballStop.y + (isBallClose ? 0 : Math.random() * 15)
+      y: ballStop.y + (isBallClose ? 0 : Math.random() * 30) + (ballStop.x < currentPlayer.x ? (ballStop.y < currentPlayer.y ? 70: -70 ) : 0)
     };
-    attackDirection = getDirectionTo(currentPlayer, zonePoint) + (ballStop.y < currentPlayer.y ? 0.6*side: -0.6*side );
+    attackDirection = getDirectionTo(currentPlayer, zonePoint);
   } 
   return {
     direction: attackDirection,
-    velocity: (currentPlayer.velocity 
-            + data.settings.player.maxVelocityIncrement) * (isPlayerNear ? 0.5: 1)
+    velocity: currentPlayer.velocity + data.settings.player.maxVelocityIncrement
   };
 }
 
-function isNearPlayer(index, team){
-  var i = 0;
-  for(var player in team)
-  {
-    if(player != team[i]){
-      var distance = getDistance(team[i],player);
-      if(distance < 30){
-        return getDirectionTo(team[i],player);
-      }      
-    }
-    i++;
-  }
-  return false;
-}
 function getDistance(point1, point2) {
   var distance = Math.hypot(point1.x-point2.x, point1.y - point2.y);
   return distance;
@@ -61,7 +43,7 @@ function getDistance(point1, point2) {
 function getBallStats(ball, gameSettings) {
   var stopTime = getStopTime(ball);
   var stopDistance = ball.velocity * stopTime
-    - ball.settings.moveDeceleration * (stopTime + 1) * stopTime / 4;
+    - ball.settings.moveDeceleration * (stopTime + 1) * stopTime / 2;
 
   var x = ball.x + stopDistance * Math.cos(ball.direction);
   var y = Math.abs(ball.y + stopDistance * Math.sin(ball.direction));
