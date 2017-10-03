@@ -12,16 +12,15 @@ function getPlayerMove(data) {
 
   var ballStop = getBallStats(ball, data.settings);
   var isBallClose =  (getDistance(currentPlayer, ball) <= ball.settings.radius*2+15);
-  var isNearBall =  (getDistance(currentPlayer, ball) <= ball.settings.radius*2+250);
-  var attackDirection = Math.atan2(ballStop.y - currentPlayer.y, ballStop.x - currentPlayer.x + ball.settings.radius-3)*1.2 * (isNearBall ? 1:Math.random()*3 );    
+  var attackDirection = Math.atan2(ballStop.y - currentPlayer.y + 500, ballStop.x - currentPlayer.x + ball.settings.radius-3)*1.3;  
   if( isBallClose && ball.x < currentPlayer.x)
   {
-    attackDirection = Math.atan2(ballStop.y - currentPlayer.y, ballStop.x - currentPlayer.x + ball.settings.radius-3)*1.8;
+    attackDirection = Math.atan2(ballStop.y - currentPlayer.y + 500, ballStop.x - currentPlayer.x + ball.settings.radius-3);
   }
   if (data.playerIndex === 1) {
     var zonePoint = {
-      x: (isNearBall ? ball.y : playerZoneStartX),
-      y: ball.y + (isBallClose ? 0 : Math.random() * 30) + (ball.x < currentPlayer.x ? 30 : 0)
+      x: (isBallClose ? ball.y : playerZoneStartX),
+      y: ball.y + (isBallClose ? 0 : Math.random() * 30)
     };
     attackDirection = getDirectionTo(currentPlayer, zonePoint);
   } 

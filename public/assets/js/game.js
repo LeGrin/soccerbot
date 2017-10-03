@@ -210,7 +210,7 @@ const Game = {
   },
 
   speedButtonClick(ev) {
-    this.gameSpead = this.settings.tickDuration * ev.target.dataset.spead;
+    this.gameSpead = this.settings.tickDuration * 1000 * ev.target.dataset.spead;
     this.speadButtons.forEach((item) => {
       if (item.dataset.spead === ev.target.dataset.spead) {
         item.className = item.className + ' active';

@@ -30,7 +30,7 @@
   },
   "playersInTeam": 3,
   "periodDuration": 30000,
-  "tickDuration": 10,
+  "tickDuration": 0,
   "bot1": "userBot.js",
   "bot2": "defaultBot.js"
 }
